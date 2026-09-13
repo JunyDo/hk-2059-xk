@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#fbf4ec">
+<title>To. you</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700&family=Gowun+Dodum&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#fbf4ec; --paper2:#f6ebdf; --ink:#4a3b32; --ink-soft:#8a7365;
+    --rose:#d98b8b; --rose-deep:#c46d6d; --line:#e8d8c8; --white:#fffdf9;
+    --serif:'Nanum Myeongjo','Apple SD Gothic Neo',serif;
+    --sans:'Gowun Dodum','Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+    --eng:'Cormorant Garamond',Georgia,serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;overscroll-behavior-y:none}
+  body{min-height:100dvh}
+  button{font-family:inherit;cursor:pointer}
+  .screen{display:none;min-height:100dvh}
+  .screen.on{display:block}
+
+  /* ───── 배경 은은한 질감 ───── */
+  body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:
+      radial-gradient(1200px 600px at 50% -10%,#fff8f0 0%,transparent 60%),
+      radial-gradient(800px 500px at 100% 100%,#f7e3e0 0%,transparent 55%),
+      var(--paper)}
+
+  /* ───── 1. 잠금 화면 ───── */
+  #lock{display:none;align-items:center;justify-content:center;padding:32px 24px;text-align:center}
+  #lock.on{display:flex}
+  .lock-card{width:100%;max-width:360px}
+  .lock-icon{font-size:44px;margin-bottom:10px;animation:float 3s ease-in-out infinite}
+  .lock-title{font-family:var(--eng);font-style:italic;font-size:15px;letter-spacing:.2em;color:var(--ink-soft);text-transform:uppercase}
+  .lock-q{font-family:var(--serif);font-size:20px;line-height:1.6;margin:18px 0 22px;word-break:keep-all}
+  .lock-input{width:100%;padding:14px 16px;font-size:20px;text-align:center;letter-spacing:.3em;
+    border:1.5px solid var(--line);border-radius:14px;background:var(--white);color:var(--ink);outline:none;font-family:var(--sans)}
+  .lock-input:focus{border-color:var(--rose)}
+  .lock-btn{margin-top:14px;width:100%;padding:14px;border:0;border-radius:14px;background:var(--rose);color:#fff;font-size:16px;letter-spacing:.05em}
+  .lock-btn:active{background:var(--rose-deep)}
+  .lock-hint{margin-top:16px;font-size:13px;color:var(--ink-soft);min-height:20px}
+  .shake{animation:shake .4s}
+  @keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+  @keyframes float{50%{transform:translateY(-6px)}}
+
+  /* ───── 2. 편지 화면 ───── */
+  #letter{padding:36px 18px 48px;animation:fadein .9s}
+  .envelope-top{text-align:center;font-family:var(--eng);font-style:italic;font-size:14px;letter-spacing:.25em;color:var(--ink-soft);margin-bottom:14px}
+  .paper{position:relative;max-width:440px;margin:0 auto;background:var(--white);border-radius:6px;
+    padding:32px 22px 32px;box-shadow:0 1px 2px rgba(74,59,50,.06),0 18px 40px -18px rgba(74,59,50,.35);
+    background-image:repeating-linear-gradient(transparent 0 31px,var(--line) 31px 32px);background-position:0 0;background-origin:border-box}
+  .paper::before,.paper::after{content:"";position:absolute;left:50%;transform:translateX(-50%) rotate(-2deg);
+    width:70px;height:22px;background:rgba(217,139,139,.35);top:-10px;backdrop-filter:blur(1px)}
+  .paper::after{display:none}
+  .paper h1{font-family:var(--serif);font-weight:700;font-size:22px;margin:0;line-height:32px;letter-spacing:-.01em}
+  .paper .to{font-family:var(--serif);font-size:15px;margin:0 0 32px;line-height:32px;color:var(--ink-soft)}
+  .paper .body{font-family:var(--serif);font-size:15.5px;line-height:32px;white-space:pre-wrap;word-break:keep-all;margin:0}
+  .paper .from{font-family:var(--serif);font-size:14px;text-align:right;margin:32px 0 0;line-height:32px;color:var(--ink-soft)}
+  .go-wrap{max-width:440px;margin:26px auto 0;text-align:center}
+  .go-btn{display:inline-flex;align-items:center;gap:10px;padding:16px 28px;border:0;border-radius:999px;
+    background:var(--ink);color:#fff;font-size:16px;letter-spacing:.04em;box-shadow:0 12px 24px -10px rgba(74,59,50,.6);
+    transition:transform .15s}
+  .go-btn:active{transform:scale(.97)}
+  .go-btn .heart{color:var(--rose);animation:beat 1.4s infinite}
+  @keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.25)}30%{transform:scale(1)}}
+  .go-sub{margin-top:10px;font-size:12px;color:var(--ink-soft)}
+  @keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  /* ───── 3. 타임라인 ───── */
+  #timeline{padding-bottom:80px}
+  .tl-hero{min-height:88dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+  .tl-hero .eng{font-family:var(--eng);font-style:italic;font-size:15px;letter-spacing:.3em;color:var(--ink-soft)}
+  .tl-hero h2{font-family:var(--serif);font-size:30px;margin:14px 0 8px;font-weight:700}
+  .tl-hero p{color:var(--ink-soft);font-size:14px;margin:0}
+  .tl-hero .arrow{margin-top:34px;font-size:22px;color:var(--ink-soft);animation:bob 1.6s infinite}
+  .tl-hero .slide-btn{margin-top:26px;background:var(--white);border:1px solid var(--line);color:var(--ink);padding:11px 20px;border-radius:999px;font-size:13px;letter-spacing:.03em;box-shadow:0 8px 18px -10px rgba(74,59,50,.4)}
+  @keyframes bob{50%{transform:translateY(8px)}}
+  .tl-hero .stats{margin-top:26px;display:flex;gap:26px}
+  .tl-hero .stats b{display:block;font-family:var(--eng);font-size:30px;font-weight:400;color:var(--ink)}
+  .tl-hero .stats span{font-size:11px;letter-spacing:.15em;color:var(--ink-soft)}
+
+  .chapter{position:relative;padding:34px 16px 30px;max-width:520px;margin:0 auto}
+  .chapter + .chapter{margin-top:14px}
+  .ch-head{text-align:center;margin-bottom:18px;opacity:0;transform:translateY(14px);transition:.7s}
+  .ch-head.show{opacity:1;transform:none}
+  .ch-date{font-family:var(--eng);font-size:13px;letter-spacing:.3em;color:var(--ink-soft)}
+  .ch-title{font-family:var(--serif);font-size:21px;font-weight:700;margin:6px 0 0}
+  .ch-story{font-family:var(--serif);font-size:14.5px;line-height:1.8;color:var(--ink-soft);margin:8px auto 0;max-width:340px;white-space:pre-wrap;word-break:keep-all}
+  .ch-num{position:absolute;left:0;right:0;top:8px;text-align:center;font-family:var(--eng);font-size:11px;letter-spacing:.3em;color:#c9b8a8}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .ph{position:relative;background:var(--white);padding:7px 7px 22px;border-radius:3px;
+    box-shadow:0 1px 2px rgba(74,59,50,.08),0 12px 24px -12px rgba(74,59,50,.4);
+    opacity:0;transform:translateY(22px) rotate(var(--r,0deg)) scale(.98);transition:opacity .7s,transform .7s}
+  .ph.show{opacity:1;transform:rotate(var(--r,0deg))}
+  .ph img{display:block;width:100%;height:100%;object-fit:cover;border-radius:2px;background:var(--paper2)}
+  .ph.wide{grid-column:1/-1}
+  .ph.wide{padding-bottom:26px}
+  .ph .cap{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-family:var(--eng);font-size:10.5px;letter-spacing:.15em;color:#b5a293}
+  .ph.wide .cap{font-size:12px}
+  /* 그리드 안 사진은 정사각/4:5 로 통일해서 깔끔하게, 와이드는 원본 비율 */
+  .ph:not(.wide) .frame{aspect-ratio:4/5;overflow:hidden;border-radius:2px}
+  .ph.wide .frame{overflow:hidden;border-radius:2px;max-height:78dvh}
+  .ph.wide.land .frame{aspect-ratio:4/3}
+  .ph.wide.port .frame{aspect-ratio:4/5}
+  .ph.wide.pano .frame{aspect-ratio:16/9}
+
+  .ending{max-width:440px;margin:60px auto 0;padding:0 22px;text-align:center;opacity:0;transform:translateY(16px);transition:.9s}
+  .ending.show{opacity:1;transform:none}
+  .ending .eng{font-family:var(--eng);font-style:italic;font-size:14px;letter-spacing:.3em;color:var(--ink-soft)}
+  .ending .msg{font-family:var(--serif);font-size:18px;line-height:2;white-space:pre-wrap;word-break:keep-all;margin:18px 0 30px}
+  .ending .big-heart{font-size:54px;animation:beat 1.6s infinite;display:inline-block}
+  .ending .back{margin-top:30px;background:none;border:1px solid var(--line);color:var(--ink-soft);padding:10px 18px;border-radius:999px;font-size:13px}
+
+  /* ───── 음악 버튼 ───── */
+  #music{position:fixed;right:14px;top:calc(14px + env(safe-area-inset-top));z-index:50;display:none;align-items:center;gap:8px;
+    background:rgba(255,253,249,.85);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:999px;padding:6px 12px 6px 8px;
+    font-size:11px;color:var(--ink-soft);max-width:62vw;box-shadow:0 6px 16px -8px rgba(74,59,50,.4)}
+  #music.on{display:flex}
+  #music .disc{width:24px;height:24px;border-radius:50%;flex:none;
+    background:conic-gradient(from 0deg,#4a3b32,#8a7365,#4a3b32,#8a7365,#4a3b32);position:relative;animation:spin 3s linear infinite}
+  #music .disc::after{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--rose)}
+  #music.paused .disc{animation-play-state:paused}
+  #music .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ───── 라이트박스 ───── */
+  #lb{position:fixed;inset:0;z-index:100;background:#150f0d;display:none;flex-direction:column;touch-action:pan-y}
+  #lb.on{display:flex}
+  #lb .stage{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+  #lb img{max-width:100%;max-height:100%;object-fit:contain;transition:opacity .2s;user-select:none;-webkit-user-drag:none}
+  #lb.auto img{animation:kb 5s ease-out forwards}
+  @keyframes kb{from{transform:scale(1)}to{transform:scale(1.07)}}
+  #lb .auto-tag{display:none;position:absolute;left:14px;top:calc(18px + env(safe-area-inset-top));z-index:2;font-family:var(--sans);font-size:11px;
+    color:#fff;background:rgba(255,255,255,.14);padding:6px 10px;border-radius:999px;letter-spacing:0}
+  #lb.auto .auto-tag{display:block}
+  #lb .cap{position:absolute;left:0;right:0;bottom:0;padding:14px 18px;text-align:center;color:#fff;font-family:var(--serif);font-size:15px;
+    background:linear-gradient(transparent,rgba(0,0,0,.55));pointer-events:none;opacity:0;transition:.4s}
+  #lb.auto .cap.show{opacity:1}
+  #lb .bar{display:flex;justify-content:space-between;align-items:center;padding:12px 18px calc(16px + env(safe-area-inset-bottom));color:#e8d8c8;font-family:var(--eng);letter-spacing:.2em;font-size:13px}
+  #lb .x{position:absolute;right:12px;top:calc(10px + env(safe-area-inset-top));width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:20px;z-index:2}
+  #lb .nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:64px;border:0;background:transparent;color:rgba(255,255,255,.55);font-size:30px}
+  #lb .nav.l{left:0}#lb .nav.r{right:0}
+
+  /* 떠다니는 하트 */
+  .hearts{position:fixed;inset:0;pointer-events:none;z-index:40;overflow:hidden}
+  .hearts i{position:absolute;bottom:-30px;font-style:normal;color:var(--rose);opacity:.7;animation:rise linear forwards}
+  @keyframes rise{to{transform:translateY(-110vh) rotate(20deg);opacity:0}}
+</style>
+</head>
+<body>
+
+<!-- 1. 잠금 -->
+<section id="lock" class="screen on">
+  <div class="lock-card">
+    <div class="lock-icon">💌</div>
+    <div class="lock-title">for you only</div>
+    <div class="lock-q" id="q"></div>
+    <form id="lockform" autocomplete="off">
+      <input class="lock-input" id="ans" inputmode="numeric" autocomplete="off" placeholder="정답 입력">
+      <button class="lock-btn" id="unlock" type="submit">열어보기</button>
+    </form>
+    <div class="lock-hint" id="hint"></div>
+  </div>
+</section>
+
+<!-- 2. 편지 -->
+<section id="letter" class="screen">
+  <div class="envelope-top">— a letter for you —</div>
+  <div class="paper">
+    <h1 id="ltitle"></h1>
+    <p class="to" id="lto"></p>
+    <p class="body" id="lbody"></p>
+    <p class="from">from. 너를 가장 좋아하는 사람</p>
+  </div>
+  <div class="go-wrap">
+    <button class="go-btn" id="go"><span class="heart">♥</span> 우리의 추억 보기</button>
+    <div class="go-sub">🔊 소리를 켜고 보면 더 좋아요</div>
+  </div>
+</section>
+
+<!-- 3. 타임라인 -->
+<section id="timeline" class="screen">
+  <div class="tl-hero">
+    <div class="eng">our story</div>
+    <h2>우리가 함께한 순간들</h2>
+    <p id="range"></p>
+    <div class="stats">
+      <div><b id="s-days">0</b><span>DAYS</span></div>
+      <div><b id="s-photos">0</b><span>PHOTOS</span></div>
+      <div><b id="s-chapters">0</b><span>MOMENTS</span></div>
+    </div>
+    <button class="slide-btn" id="slideshow">▶ 슬라이드쇼로 감상하기</button>
+    <div class="arrow">↓</div>
+  </div>
+  <div id="chapters"></div>
+  <div class="ending" id="ending">
+    <div class="eng">and today</div>
+    <div class="big-heart">❤</div>
+    <div class="msg" id="emsg"></div>
+    <button class="back" id="back">편지 다시 보기</button>
+  </div>
+</section>
+
+<div id="music" class="paused"><div class="disc"></div><div class="t" id="mtitle">♪</div></div>
+
+<div id="lb">
+  <button class="x" id="lbx">✕</button>
+  <div class="auto-tag">▶ 자동재생 중 · 화면을 누르면 멈춰요</div>
+  <div class="stage">
+    <button class="nav l" id="lbl">‹</button>
+    <img id="lbimg" alt="">
+    <div class="cap" id="lbcap"></div>
+    <button class="nav r" id="lbr">›</button>
+  </div>
+  <div class="bar"><span id="lbdate"></span><span id="lbcount"></span></div>
+</div>
+<div class="hearts" id="hearts"></div>
+
+<script src="data.js"></script>
+<script>
+(function(){
+  const D = window.DATA || {};
+  const $ = s => document.querySelector(s);
+  const photos = D.photos || [];
+  const show = id => { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on')); $(id).classList.add('on'); window.scrollTo(0,0); };
+  const fmtDate = d => { const [y,m,dd]=d.split('-'); return `${y}.${m}.${dd}`; };
+  const fmtKo = d => { const [y,m,dd]=d.split('-'); return `${y}년 ${+m}월 ${+dd}일`; };
+  const nl = s => (s||'').replace(/\\n/g,'\n');
+
+  /* ── 잠금 ── */
+  $('#q').textContent = D.question || '';
+  $('#hint').textContent = D.hint || '';
+  const answer = (()=>{ try{ return decodeURIComponent(escape(atob(D.answer||''))); }catch(e){ return ''; } })();
+  const tryUnlock = () => {
+    const v = $('#ans').value.trim().replace(/[^0-9a-zA-Z가-힣]/g,'');
+    if (v && v === answer.replace(/[^0-9a-zA-Z가-힣]/g,'')) {
+      $('#lock').classList.add('shake'); // 살짝 흔들리며 열림
+      setTimeout(()=>show('#letter'), 250);
+    } else {
+      $('#ans').classList.remove('shake'); void $('#ans').offsetWidth; $('#ans').classList.add('shake');
+      $('#hint').textContent = (D.hint ? D.hint + '  ' : '') + '다시 생각해봐 🙂';
+    }
+  };
+  $('#lockform').addEventListener('submit', e => { e.preventDefault(); tryUnlock(); });
+  if (!answer) show('#letter');           // 정답 미설정이면 잠금 생략
+
+  /* ── 편지 ── */
+  $('#ltitle').textContent = D.title || '';
+  $('#lto').textContent = D.name ? `${D.name}에게` : '';
+  $('#lbody').textContent = D.letter || '';
+
+  /* ── 타임라인 구성 ── */
+  const groups = [];
+  photos.forEach((p,i)=>{ p.i=i; const g=groups[groups.length-1]; if(g&&g.id===p.group) g.items.push(p); else groups.push({id:p.group,date:p.date,items:[p]}); });
+  const dateLabel = g => { const a=g.items[0].date, b=g.items[g.items.length-1].date; if(a===b) return fmtDate(a);
+    return a.slice(0,7)===b.slice(0,7) ? `${fmtDate(a)} – ${b.slice(8)}` : `${fmtDate(a)} – ${fmtDate(b)}`; };
+  const groupTitle = g => { const m=(D.memories||{})[g.date]||{}; return m.title || fmtKo(g.date); };
+  const first = photos[0]?.date, last = photos[photos.length-1]?.date;
+  if (first) {
+    $('#range').textContent = `${fmtDate(first)}  —  ${fmtDate(last)}`;
+    $('#s-days').textContent = Math.round((new Date() - new Date(first))/864e5) + 1;
+  }
+  $('#s-photos').textContent = photos.length;
+  $('#s-chapters').textContent = groups.length;
+
+  const rot = () => ((Math.random()*3)-1.5).toFixed(2)+'deg';
+  const orient = p => { const r=p.w/p.h; return r>1.6?'pano':r>1.05?'land':'port'; };
+  const wrap = $('#chapters');
+  groups.forEach((g,gi)=>{
+    const m = (D.memories||{})[g.date] || {};
+    const ch = document.createElement('section'); ch.className='chapter';
+    ch.innerHTML = `<div class="ch-num">${String(gi+1).padStart(2,'0')} / ${String(groups.length).padStart(2,'0')}</div>
+      <div class="ch-head"><div class="ch-date">${dateLabel(g)}</div>
+      <h3 class="ch-title">${groupTitle(g)}</h3>${m.story?`<p class="ch-story">${m.story}</p>`:''}</div>
+      <div class="grid"></div>`;
+    const grid = ch.querySelector('.grid');
+    const n = g.items.length;
+    g.items.forEach((p,k)=>{
+      // 레이아웃 규칙: 1장 → 크게 / 첫 장은 크게 / 남은 개수가 홀수면 마지막도 크게 / 6장 이상이면 중간에도 한 번 크게
+      let wide = (n===1) || (k===0) || (k===n-1 && (n-1)%2===1) || (n>=6 && k===Math.floor(n/2)+ (n%2?0:1) && (k-1)%2===0);
+      const el = document.createElement('figure'); el.className='ph'+(wide?' wide '+orient(p):''); el.style.setProperty('--r', wide?rot():rot());
+      el.style.margin='0';
+      el.innerHTML = `<div class="frame"><img loading="lazy" src="${p.src}" alt=""></div><div class="cap">${p.time}</div>`;
+      el.onclick = ()=>openLb(p.i);
+      grid.appendChild(el);
+    });
+    wrap.appendChild(ch);
+  });
+  $('#emsg').textContent = nl(D.ending) || '생일 축하해 ❤';
+
+  const io = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target);} }),{rootMargin:'0px 0px -8% 0px',threshold:.05});
+  document.querySelectorAll('.ch-head,.ph,.ending').forEach(el=>io.observe(el));
+
+  /* ── BGM: 두 곡 번갈아 무한 반복 ── */
+  const tracks = D.bgm || [];
+  const audio = new Audio(); audio.preload='auto'; let ti=0, playing=false;
+  const music = $('#music');
+  const loadTrack = i => { ti = i % tracks.length; audio.src = tracks[ti].src; $('#mtitle').textContent = '♪ ' + tracks[ti].title; };
+  audio.addEventListener('ended', ()=>{ if(tracks.length){ loadTrack(ti+1); audio.play().catch(()=>{}); } });
+  const startMusic = () => {
+    if (!tracks.length) return;
+    loadTrack(0); audio.volume = 0; audio.play().then(()=>{ playing=true; music.classList.remove('paused');
+      let v=0; const f=setInterval(()=>{ v=Math.min(1,v+.05); audio.volume=v; if(v>=1) clearInterval(f); },80); }).catch(()=>{});
+    music.classList.add('on');
+  };
+  music.onclick = () => { if(playing){ audio.pause(); playing=false; music.classList.add('paused'); } else { audio.play().then(()=>{playing=true; music.classList.remove('paused');}).catch(()=>{}); } };
+
+  /* ── 화면 전환 ── */
+  $('#go').onclick = () => { startMusic(); show('#timeline'); burstHearts(); };
+  $('#back').onclick = () => show('#letter');
+
+  /* ── 라이트박스 (스와이프) ── */
+  const lb=$('#lb'), lbimg=$('#lbimg'); let cur=0, timer=null;
+  const openLb = i => { cur=i; render(); lb.classList.add('on'); document.body.style.overflow='hidden'; };
+  const closeLb = () => { stopAuto(); lb.classList.remove('on'); document.body.style.overflow=''; };
+  const render = () => { const p=photos[cur]; lbimg.style.opacity=.3; lbimg.src=p.full; lbimg.onload=()=>lbimg.style.opacity=1;
+    lbimg.style.animation='none'; void lbimg.offsetWidth; lbimg.style.animation='';
+    $('#lbdate').textContent = fmtDate(p.date)+'  '+p.time; $('#lbcount').textContent = `${cur+1} / ${photos.length}`;
+    const g = groups.find(g=>g.id===p.group); const firstOfGroup = g && g.items[0]===p;
+    $('#lbcap').textContent = g ? groupTitle(g) : ''; $('#lbcap').classList.toggle('show', !!firstOfGroup);
+    [cur+1,cur-1].forEach(j=>{ if(photos[j]) new Image().src=photos[j].full; }); };
+  const step = d => { cur=(cur+d+photos.length)%photos.length; render(); };
+  /* 슬라이드쇼: 5초마다 자동 넘김, 마지막 사진 후 엔딩으로 */
+  const startAuto = () => { lb.classList.add('auto'); openLb(0);
+    timer = setInterval(()=>{ if(cur>=photos.length-1){ closeLb(); $('#ending').scrollIntoView({behavior:'smooth'}); return; } step(1); }, 5000); };
+  const stopAuto = () => { clearInterval(timer); timer=null; lb.classList.remove('auto'); };
+  $('#slideshow').onclick = startAuto;
+  lb.querySelector('.stage').addEventListener('click', e => { if(timer && !e.target.closest('.nav')) stopAuto(); });
+  $('#lbx').onclick=closeLb; $('#lbl').onclick=()=>{stopAuto();step(-1);}; $('#lbr').onclick=()=>{stopAuto();step(1);};
+  let sx=0, sy=0;
+  lb.addEventListener('touchstart',e=>{ sx=e.touches[0].clientX; sy=e.touches[0].clientY; },{passive:true});
+  lb.addEventListener('touchend',e=>{ const dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)){ stopAuto(); step(dx<0?1:-1); } else if(dy>90 && Math.abs(dy)>Math.abs(dx)) closeLb(); },{passive:true});
+  document.addEventListener('keydown',e=>{ if(!lb.classList.contains('on')) return; if(e.key==='Escape') closeLb(); if(e.key==='ArrowRight') step(1); if(e.key==='ArrowLeft') step(-1); });
+
+  /* ── 하트 ── */
+  function burstHearts(){ const h=$('#hearts'); for(let i=0;i<18;i++){ const s=document.createElement('i'); s.textContent=['♥','♡','❤'][i%3];
+    s.style.left=Math.random()*100+'vw'; s.style.fontSize=(12+Math.random()*22)+'px'; s.style.animationDuration=(3+Math.random()*3)+'s'; s.style.animationDelay=(Math.random()*1.5)+'s';
+    h.appendChild(s); setTimeout(()=>s.remove(),7000);} }
+})();
+</script>
+</body>
+</html>
