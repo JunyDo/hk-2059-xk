@@ -264,7 +264,8 @@
   const groupTitle = g => { const m=(D.memories||{})[g.date]||{}; return m.title || fmtKo(g.date); };
   const first = photos[0]?.date, last = photos[photos.length-1]?.date;
   if (first) {
-    $('#range').textContent = `${fmtDate(first)}  —  ${fmtDate(last)}`;
+    const today = new Date(), pad = n => String(n).padStart(2,'0');   // 뒷 날짜는 페이지를 여는 '오늘'
+    $('#range').textContent = `${fmtDate(first)}  —  ${today.getFullYear()}.${pad(today.getMonth()+1)}.${pad(today.getDate())}`;
     $('#s-days').textContent = Math.round((new Date() - new Date(first))/864e5) + 1;
   }
   $('#s-photos').textContent = photos.length;
