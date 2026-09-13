@@ -498,24 +498,6 @@ window.DATA = {
    "date": "2026-09-12",
    "time": "12:31",
    "group": 18
-  },
-  {
-   "src": "photos/47.jpg",
-   "full": "photos/full/47.jpg",
-   "w": 1000,
-   "h": 1000,
-   "date": "2026-09-13",
-   "time": "22:39",
-   "group": 18
-  },
-  {
-   "src": "photos/48.jpg",
-   "full": "photos/full/48.jpg",
-   "w": 900,
-   "h": 900,
-   "date": "2026-09-13",
-   "time": "22:39",
-   "group": 18
   }
  ],
  "bgm": [
